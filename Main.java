@@ -118,7 +118,8 @@ public class Main {
             System.out.println("\n--- Customer Management ---");
             System.out.println("1. Add New Customer");
             System.out.println("2. View All Customers");
-            System.out.println("3. Back to Main Menu");
+			System.out.println("3. Delete a Customer");
+            System.out.println("4. Back to Main Menu");
             System.out.print("Select option: ");
 
             int choice = scanner.nextInt();
@@ -127,11 +128,24 @@ public class Main {
             switch (choice) {
                 case 1 -> addNewCustomer();
                 case 2 -> viewAllCustomers();
-                case 3 -> { return; }
+				case 3 -> deleteCustomer(); 
+                case 4 -> { return; }
                 default -> System.out.println("Invalid option!");
             }
         }
     }
+	private static void deleteCustomer() throws Exception {
+    System.out.print("Enter Customer ID to delete: ");
+    int id = scanner.nextInt();
+    scanner.nextLine(); // Consume newline
+
+    try {
+        customerService.deleteCustomer(id); // Calls the delete method in the service
+        System.out.println("Customer deleted successfully!");
+    } catch (CustomerNotFoundException e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}
 
     private static void addNewCustomer() throws Exception {
         System.out.print("\nEnter Customer Name: ");
