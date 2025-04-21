@@ -2,7 +2,7 @@ import dao.*;
 import model.*;
 import service.*;
 import exceptions.*;
-import java.time.LocalDate;
+
 import java.util.Scanner;
 
 public class Main {
@@ -10,7 +10,7 @@ public class Main {
     private static CustomerService customerService;
     private static SaleService saleService;
     private static UserService userService;
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         try {
@@ -29,7 +29,7 @@ public class Main {
         CustomerDAO customerDAO = new CustomerDAOImpl();
         SaleDAO saleDAO = new SaleDAOImpl();
         UserDAO userDAO = new UserDAOImpl();
-        
+
         jewelleryService = new JewelleryService(jewelleryDAO);
         customerService = new CustomerService(customerDAO);
         saleService = new SaleService(saleDAO, jewelleryDAO, customerDAO);
@@ -38,7 +38,7 @@ public class Main {
 
     private static void showMainMenu() throws Exception {
         while (true) {
-            System.out.println("\n===== Jewellery Store Management =====");
+            System.out.println("\n========================== Jewellery Store Management ==========================");
             System.out.println("1. Manage Jewellery");
             System.out.println("2. Manage Customers");
             System.out.println("3. Process Sale");
@@ -50,27 +50,20 @@ public class Main {
             scanner.nextLine(); // Consume newline
 
             switch (choice) {
-                case 1:
-                    showJewelleryMenu();
-                    break;
-                case 2:
-                    showCustomerMenu();
-                    break;
-                case 3:
-                    processNewSale();
-                    break;
-                case 4:
-                    generateReports();
-                    break;
-                case 5:
+                case 1 -> showJewelleryMenu();
+                case 2 -> showCustomerMenu();
+                case 3 -> processNewSale();
+                case 4 -> generateReports();
+                case 5 -> {
                     System.out.println("Exiting...");
                     return;
-                default:
-                    System.out.println("Invalid option!");
+                }
+                default -> System.out.println("Invalid option!");
             }
         }
     }
 
+    // ===================== JEWELLERY MENU =====================
     private static void showJewelleryMenu() throws Exception {
         System.out.println("\n--- Jewellery Management ---");
         System.out.println("1. Add New Jewellery");
@@ -82,16 +75,11 @@ public class Main {
         scanner.nextLine();
 
         switch (choice) {
-            case 1:
-                addNewJewellery();
-                break;
-            case 2:
-                viewAllJewellery();
-                break;
-            case 3:
-                return;
-            default:
-                System.out.println("Invalid option!");
+            case 1 -> addNewJewellery();
+            case 2 -> viewAllJewellery();
+            case 3 -> {
+            }
+            default -> System.out.println("Invalid option!");
         }
     }
 
@@ -118,17 +106,64 @@ public class Main {
 
     private static void viewAllJewellery() {
         System.out.println("\n=== Available Jewellery ===");
-        jewelleryService.getAllJewellery().forEach(j -> 
-            System.out.printf("%s - $%.2f (%d in stock)\n", 
-                j.getName(), j.getPrice(), j.getStockQuantity())
+        jewelleryService.getAllJewellery().forEach(j ->
+            System.out.printf("ID: %d | %s - ₹%.2f | %d in stock\n",
+                j.getId(), j.getName(), j.getPrice(), j.getStockQuantity())
         );
     }
 
+    // ===================== CUSTOMER MENU =====================
     private static void showCustomerMenu() throws Exception {
-        // Similar structure to jewellery menu
-        // Implement customer management options
+        while (true) {
+            System.out.println("\n--- Customer Management ---");
+            System.out.println("1. Add New Customer");
+            System.out.println("2. View All Customers");
+            System.out.println("3. Back to Main Menu");
+            System.out.print("Select option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1 -> addNewCustomer();
+                case 2 -> viewAllCustomers();
+                case 3 -> { return; }
+                default -> System.out.println("Invalid option!");
+            }
+        }
     }
 
+    private static void addNewCustomer() throws Exception {
+        System.out.print("\nEnter Customer Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter Phone Number: ");
+        String phone = scanner.nextLine();
+        System.out.print("Enter Address: ");
+        String address = scanner.nextLine();
+
+        Customer customer = new Customer(name, email, phone, address);
+        customerService.addCustomer(customer);
+        System.out.println("Customer added successfully!");
+    }
+
+    private static void viewAllCustomers() throws Exception {
+        System.out.println("\n=== Customer List ===");
+        var customers = customerService.getAllCustomers();
+
+        if (customers.isEmpty()) {
+            System.out.println("No customers found.");
+            return;
+        }
+
+        for (Customer customer : customers) {
+            System.out.printf("ID: %d | Name: %s | Email: %s | Phone: %s | Address: %s\n",
+                customer.getId(), customer.getName(), customer.getEmail(), customer.getPhone(), customer.getAddress());
+        }
+    }
+
+    // ===================== SALES =====================
     private static void processNewSale() throws Exception {
         System.out.println("\n=== Process New Sale ===");
         System.out.print("Customer ID: ");
@@ -144,8 +179,10 @@ public class Main {
         System.out.println("Sale processed successfully!");
     }
 
+    // ===================== REPORTS =====================
     private static void generateReports() {
         System.out.println("\n=== Reports ===");
-        
+        // You can implement full report details here later
+        System.out.println("Feature coming soon...");
     }
 }
